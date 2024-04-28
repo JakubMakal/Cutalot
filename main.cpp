@@ -3,10 +3,18 @@
 
 using namespace std;
 
+/*
+Poznámky:
+vesnice(gold, hp, maxhp, energie, maxenergie); <-- implementovat
+
+udělat monstra -> vymyslet fight
+
+přidat ability
+*/
+
 class player
 {
-    public:
-
+public:
     string name;
     int hp;
     int maxhp;
@@ -15,18 +23,101 @@ class player
     int level;
     int zkušenosti;
     int vitality; // warrior
-    int mana; // mage
-    int agility; // rogue
+    int mana;     // mage
+    int agility;  // rogue
     int gold;
-
 };
+
+void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxenergie)
+{
+    int volba;
+    bool opakovat = true;
+
+    do
+    {
+        cout << "Vítej ve vesnici!\n";
+        cout << "Co si přeješ udělat?\n";
+        cout << "1. Koupit zvýšení životů (+10 HP)\n";
+        cout << "2. Koupit zvýšení many (+10 MP)\n";
+        cout << "3. Vyléčit se na maximum\n";
+        cout << "4. Doplnit manu na maximum\n";
+        cout << "5. Nic, odejít z vesnice\n";
+
+        cin >> volba;
+
+        switch (volba)
+        {
+        case 1:
+            if (gold >= 10)
+            {
+                gold -= 10;
+                maxživoty += 10;
+                cout << "Koupil jsi zvýšení životů (+10 HP).\n";
+            }
+            else
+            {
+                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+            }
+            break;
+
+        case 2:
+            if (gold >= 10)
+            {
+                gold -= 10;
+                maxenergie += 10;
+                cout << "Koupil jsi zvýšení many (+10 MP).\n";
+            }
+            else
+            {
+                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+            }
+            break;
+
+        case 3:
+            if (gold >= 10)
+            {
+                životy = maxživoty;
+                cout << "Byl jsi vyléčen na maximum.\n";
+            }
+            else
+            {
+                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+            }
+            break;
+
+        case 4:
+           if (gold >= 10)
+            {
+            energie = maxenergie;
+            cout << "Tvá mana byla doplněna na maximum.\n";
+            }
+            else
+            {
+                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+            }
+            break;
+
+        case 5:
+            cout << "Opouštíš vesnici.\n";
+            opakovat = false;
+            break;
+
+        default:
+            cout << "Neplatná volba, zkus to znovu.\n";
+            break;
+        }
+
+    } while (opakovat);
+}
 
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
 
     int VýběrPostavy;
-   
+    char potvrzení;
+    bool potvrdit;
+
     player warrior;
     warrior.name = "Darius Ironfist";
     warrior.hp = 20;
@@ -53,42 +144,57 @@ int main()
     rogue.maxenergie = 30;
     rogue.gold = 5;
     rogue.agility = 30;
-    
 
     player hráč;
 
-    cout << "Zdravím poutníku vyber si svou postavu:\n1. Warrior\n2. Mage\n3. Rogue\n";
+    cout << "Zdravím poutníku vyber si svou postavu:\n";
 
     do
     {
-    cin >> VýběrPostavy;
+        cout << "1. Warrior\n2. Mage\n3. Rogue\n";
+        cin >> VýběrPostavy;
 
-    switch (VýběrPostavy)
-    {
-    case 1:
-        hráč = warrior;
-        cout << "jméno: " << hráč.name << "\n";
-        cout << "hp/max hp: " << hráč.hp << hráč.maxhp << "\n";
-        break;
-    
-    case 2:
-        hráč = mage;
-        cout << "jméno: " << hráč.name << "\n";
-        cout << "hp/max hp: " << hráč.hp << hráč.maxhp << "\n";
-        break;
+        switch (VýběrPostavy)
+        {
+        case 1:
+            hráč = warrior;
+            cout << "jméno: " << hráč.name << "\n";
+            cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
+            cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
+            cout << "gold: " << hráč.gold << "\n";
+            cout << "vitality: " << hráč.vitality << "\n";
+            break;
 
-    case 3:
-        hráč = rogue;
-        cout << "jméno: " << hráč.name << "\n";
-        cout << "hp/max hp: " << hráč.hp << hráč.maxhp << "\n";
+        case 2:
+            hráč = mage;
+            cout << "jméno: " << hráč.name << "\n";
+            cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
+            cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
+            cout << "gold: " << hráč.gold << "\n";
+            cout << "mana: " << hráč.mana << "\n";
+            break;
 
-        break;
+        case 3:
+            hráč = rogue;
+            cout << "jméno: " << hráč.name << "\n";
+            cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
+            cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
+            cout << "gold: " << hráč.gold << "\n";
+            cout << "agility " << hráč.agility << "\n";
+            break;
+        }
 
-    default:
-        cout << "Neplatná volba, vyber si prosím znovu.\n";
-        break;
-    }
-    }while (VýběrPostavy != (1 || 2 || 3));
+        cout << "Potvrďte výběr postavy stiskem 'y', odmítněte klávesou 'n':\n";
+        cin >> potvrzení;
 
+        if (potvrzení == 'y' || potvrzení == 'Y')
+        {
+            potvrdit = true;
+        }
+        else
+        {
+            potvrdit = false;
+        }
 
+    } while (!potvrdit);
 }
