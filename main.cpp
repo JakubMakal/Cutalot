@@ -3,8 +3,8 @@
 
 using namespace std;
 
-/*
-Poznámky:
+/* Poznámky:
+
 vesnice(gold, hp, maxhp, energie, maxenergie); <-- implementovat
 
 udělat monstra -> vymyslet fight
@@ -22,10 +22,25 @@ public:
     int maxenergie;
     int level;
     int zkušenosti;
-    int vitality; // warrior
-    int mana;     // mage
-    int agility;  // rogue
+    int damage;
     int gold;
+
+    void Staty()
+    {
+        cout << "jméno: " << name << "\n";
+        cout << "hp/max hp: " << hp << "/" << maxhp << "\n";
+        cout << "energie/max energie: " << energie << "/" << maxenergie << "\n";
+        cout << "damage: " << damage << "\n";
+        cout << "gold: " << gold << "\n";
+    }
+};
+
+class monster
+{
+    public:
+    string jméno;
+    string tvar;
+    int damage;
 };
 
 void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxenergie)
@@ -125,7 +140,7 @@ int main()
     warrior.energie = 50;
     warrior.maxenergie = 50;
     warrior.gold = 5;
-    warrior.vitality = 10;
+    warrior.damage = 10;
 
     player mage;
     mage.name = "Ranni Shadowcaster";
@@ -134,7 +149,7 @@ int main()
     mage.energie = 20;
     mage.maxenergie = 25;
     mage.gold = 5;
-    mage.mana = 30;
+    mage.damage = 30;
 
     player rogue;
     rogue.name = "Ezio Silentblade";
@@ -143,7 +158,7 @@ int main()
     rogue.energie = 25;
     rogue.maxenergie = 30;
     rogue.gold = 5;
-    rogue.agility = 30;
+    rogue.damage = 30;
 
     player hráč;
 
@@ -162,7 +177,7 @@ int main()
             cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
             cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
             cout << "gold: " << hráč.gold << "\n";
-            cout << "vitality: " << hráč.vitality << "\n";
+            cout << "damage: " << hráč.damage << "\n";
             break;
 
         case 2:
@@ -171,7 +186,7 @@ int main()
             cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
             cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
             cout << "gold: " << hráč.gold << "\n";
-            cout << "mana: " << hráč.mana << "\n";
+            cout << "damage: " << hráč.damage << "\n";
             break;
 
         case 3:
@@ -180,7 +195,7 @@ int main()
             cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
             cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
             cout << "gold: " << hráč.gold << "\n";
-            cout << "agility " << hráč.agility << "\n";
+            cout << "damage: " << hráč.damage << "\n";
             break;
         }
 
@@ -197,4 +212,6 @@ int main()
         }
 
     } while (!potvrdit);
+
+
 }
