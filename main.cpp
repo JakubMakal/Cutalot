@@ -25,7 +25,7 @@ public:
     int damage;
     int gold;
 
-    void Staty()
+    void StatyPlayer()
     {
         cout << "jméno: " << name << "\n";
         cout << "hp/max hp: " << hp << "/" << maxhp << "\n";
@@ -41,6 +41,16 @@ class monster
     string jméno;
     string tvar;
     int damage;
+    int životy;
+    int maxživoty;
+
+    void StatyMonster()
+    {
+        cout << tvar << "\n";
+        cout << "Jméno: " << jméno << "\n";
+        cout << "Životy\max životy" << životy << "/" << maxživoty << "\n";
+        cout << "Damage: " << damage << "\n";
+    }
 };
 
 void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxenergie)
