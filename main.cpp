@@ -33,23 +33,30 @@ public:
         cout << "damage: " << damage << "\n";
         cout << "gold: " << gold << "\n";
     }
+
+    bool IsAlive()
+    {
+        return hp > 0;
+    }
 };
 
 class monster
 {
     public:
     string jméno;
-    string tvar;
     int damage;
     int životy;
-    int maxživoty;
 
     void StatyMonster()
     {
-        cout << tvar << "\n";
         cout << "Jméno: " << jméno << "\n";
-        cout << "Životy\max životy" << životy << "/" << maxživoty << "\n";
+        cout << "Životy" << životy << "\n";
         cout << "Damage: " << damage << "\n";
+    }
+
+    bool IsAlive()
+    {
+        return životy > 0;
     }
 };
 
@@ -133,6 +140,41 @@ void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxene
         }
 
     } while (opakovat);
+}
+
+void fight()
+{
+
+}
+
+void multifight(player &hrac, vector<monster> &monsters)
+{
+    while (hrac.IsAlive() && !monsters.empty())
+    {
+        cout << "\nTvůj tah! Vyber si monstrum k útoku:\n";
+        for (size_t i = 0; i < monsters.size(); ++i)
+        {
+            if (monsters[i].IsAlive())
+            {
+                cout << i + 1 << ". " << monsters[i].jméno << " (Životy: " << monsters[i].životy << ")\n";
+            }
+        }
+    }
+
+    int výběr;
+    cin >> výběr;
+    výběr--;
+
+    if (výběr >= 0 && výběr < monsters.size() && monsters[výběr].IsAlive())
+        {
+            cout << "Útočíš na " << monsters[výběr].jméno << " a způsobuješ " << hrac.damage << " poškození!\n";
+            monsters[výběr].takeDamage(hrac.damage);
+        }
+        else
+        {
+            cout << "Neplatná volba monstra. Přicházíš o tah!\n";
+        }
+
 }
 
 int main()
