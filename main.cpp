@@ -58,6 +58,11 @@ class monster
     {
         return životy > 0;
     }
+
+    void attack()
+    {
+        cout << jméno << " útočí a způsobuje " << damage << " poškození!\n";
+    }
 };
 
 void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxenergie)
@@ -159,13 +164,13 @@ void multifight(player &hrac, vector<monster> &monsters)
                 cout << i + 1 << ". " << monsters[i].jméno << " (Životy: " << monsters[i].životy << ")\n";
             }
         }
-    }
+    
 
-    int výběr;
-    cin >> výběr;
-    výběr--;
+        int výběr;
+        cin >> výběr;
+        výběr--;
 
-    if (výběr >= 0 && výběr < monsters.size() && monsters[výběr].IsAlive())
+        if (výběr >= 0 && výběr < monsters.size() && monsters[výběr].IsAlive())
         {
             cout << "Útočíš na " << monsters[výběr].jméno << " a způsobuješ " << hrac.damage << " poškození!\n";
             monsters[výběr].takeDamage(hrac.damage);
@@ -174,6 +179,24 @@ void multifight(player &hrac, vector<monster> &monsters)
         {
             cout << "Neplatná volba monstra. Přicházíš o tah!\n";
         }
+        
+        for(auto &monster : monsters)
+        {
+            if (monster.IsAlive())
+            {
+                monster.attack();
+                hrac.hp -= monster.damage;
+                if (hrac.hp < 0) hrac.hp = 0;
+                cout << "Zbývající životy hráče: " << hrac.hp << "\n";
+                if (!hrac.IsAlive())
+                {
+                    cout << "Byl jsi poražen...\n";
+                    return;
+                }
+            }
+        }
+    }
+
 
 }
 
