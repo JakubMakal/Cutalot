@@ -248,29 +248,17 @@ int main()
         {
         case 1:
             hráč = warrior;
-            cout << "jméno: " << hráč.name << "\n";
-            cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
-            cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
-            cout << "gold: " << hráč.gold << "\n";
-            cout << "damage: " << hráč.damage << "\n";
+            hráč.StatyPlayer();
             break;
 
         case 2:
             hráč = mage;
-            cout << "jméno: " << hráč.name << "\n";
-            cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
-            cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
-            cout << "gold: " << hráč.gold << "\n";
-            cout << "damage: " << hráč.damage << "\n";
+            hráč.StatyPlayer();
             break;
 
         case 3:
             hráč = rogue;
-            cout << "jméno: " << hráč.name << "\n";
-            cout << "hp/max hp: " << hráč.hp << "/" << hráč.maxhp << "\n";
-            cout << "energie/max energie: " << hráč.energie << "/" << hráč.maxenergie << "\n";
-            cout << "gold: " << hráč.gold << "\n";
-            cout << "damage: " << hráč.damage << "\n";
+            hráč.StatyPlayer();
             break;
         }
 
