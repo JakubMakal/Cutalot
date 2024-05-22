@@ -1,16 +1,8 @@
 #include <iostream>
+#include <vector>
 #include <windows.h>
 
 using namespace std;
-
-/* Poznámky:
-
-vesnice(gold, hp, maxhp, energie, maxenergie); <-- implementovat
-
-udělat monstra -> vymyslet fight
-
-přidat ability
-*/
 
 class player
 {
@@ -38,19 +30,61 @@ public:
     {
         return hp > 0;
     }
+
+    void gainExperience(int xp)
+    {
+        zkušenosti += xp;
+        cout << "Získal jsi " << xp << " zkušeností.\n";
+        levelUp();
+    }
+
+    void gainGold(int amount)
+    {
+        if (rand() % 2 == 0)
+        {
+            gold += amount;
+            cout << "Získal jsi " << amount << " zlaťáků.\n";
+        }
+        else
+        {
+            cout << "Tentokrát jsi nezískal žádné zlaťáky.\n";
+        }
+    }
+
+private:
+    void levelUp()
+    {
+        while (zkušenosti >= level * 10)
+        {
+            zkušenosti -= level * 100;
+            level++;
+            maxhp += 10;
+            hp = maxhp;
+            maxenergie += 5;
+            energie = maxenergie;
+            damage += 5;
+            cout << "Gratulujeme! Postoupil jsi na úroveň " << level << "!\n";
+            cout << "Tvé statistiky byly vylepšeny.\n";
+        }
+    }
 };
 
 class monster
 {
-    public:
+public:
     string jméno;
     int damage;
     int životy;
+    int maxživoty;
+    int xpReward;
+    int goldReward;
+
+    monster(string name, int dmg, int hp, int xp, int gold) : jméno(name), damage(dmg), životy(hp), maxživoty(hp), xpReward(xp), goldReward(gold) {}
 
     void StatyMonster()
     {
         cout << "Jméno: " << jméno << "\n";
-        cout << "Životy" << životy << "\n";
+        cout << "Životy: " << životy << "\n";
         cout << "Damage: " << damage << "\n";
     }
 
@@ -62,6 +96,13 @@ class monster
     void attack()
     {
         cout << jméno << " útočí a způsobuje " << damage << " poškození!\n";
+    }
+
+    void takeDamage(int damage)
+    {
+        životy -= damage;
+        if (životy < 0) životy = 0;
+        cout << jméno << " dostává " << damage << " poškození. Zbývající životy: " << životy << ".\n";
     }
 };
 
@@ -147,11 +188,6 @@ void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxene
     } while (opakovat);
 }
 
-void fight()
-{
-
-}
-
 void multifight(player &hrac, vector<monster> &monsters)
 {
     while (hrac.IsAlive() && !monsters.empty())
@@ -174,6 +210,12 @@ void multifight(player &hrac, vector<monster> &monsters)
         {
             cout << "Útočíš na " << monsters[výběr].jméno << " a způsobuješ " << hrac.damage << " poškození!\n";
             monsters[výběr].takeDamage(hrac.damage);
+            if (!monsters[výběr].IsAlive())
+            {
+                cout << monsters[výběr].jméno << " byl poražen!\n";
+                hrac.gainExperience(monsters[výběr].xpReward);
+                hrac.gainGold(monsters[výběr].goldReward);
+            }
         }
         else
         {
@@ -195,8 +237,13 @@ void multifight(player &hrac, vector<monster> &monsters)
                 }
             }
         }
+        monsters.erase(remove_if(monsters.begin(), monsters.end(), [](monster &m) { return !m.IsAlive(); }), monsters.end());
     }
-
+    
+    if (hrac.IsAlive())
+    {
+        cout << "Všechny monstra byly poraženy! Vyhrál jsi!\n";
+    }
 
 }
 
@@ -276,5 +323,5 @@ int main()
 
     } while (!potvrdit);
 
-
+    
 }
