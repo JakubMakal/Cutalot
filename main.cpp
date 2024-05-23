@@ -16,7 +16,7 @@ public:
     int zkušenosti;
     int damage;
     int gold;
-
+    string className;
     void StatyPlayer()
     {
         cout << "jméno: " << name << "\n";
@@ -263,6 +263,7 @@ int main()
     warrior.maxenergie = 50;
     warrior.gold = 5;
     warrior.damage = 10;
+    warrior.className = "warrior";
 
     player mage;
     mage.name = "Ranni Shadowcaster";
@@ -272,6 +273,7 @@ int main()
     mage.maxenergie = 25;
     mage.gold = 5;
     mage.damage = 30;
+    mage.className = "mage";
 
     player rogue;
     rogue.name = "Ezio Silentblade";
@@ -281,7 +283,8 @@ int main()
     rogue.maxenergie = 30;
     rogue.gold = 5;
     rogue.damage = 30;
-
+    rogue.className = "rogue";
+    
     player hráč;
 
     cout << "Zdravím poutníku vyber si svou postavu:\n";
