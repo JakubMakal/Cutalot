@@ -51,6 +51,30 @@ public:
         }
     }
 
+    void useAbility(int abilityIndex, monster &target) {
+        if (className == "Warrior") {
+            if (abilityIndex == 1) {
+                bash(target);
+            } else if (abilityIndex == 2) {
+                heal();
+            }
+        } else if (className == "Mage") {
+            if (abilityIndex == 1) {
+                fireball(target);
+            } else if (abilityIndex == 2) {
+                heal();
+            }
+        } else if (className == "Rogue") {
+            if (abilityIndex == 1) {
+                backstab(target);
+            } else if (abilityIndex == 2) {
+                heal();
+            }
+        } else {
+            cout << "Neplatná volba schopnosti.\n";
+        }
+    }
+
 private:
     void levelUp()
     {
@@ -200,7 +224,6 @@ void multifight(player &hrac, vector<monster> &monsters)
                 cout << i + 1 << ". " << monsters[i].jméno << " (Životy: " << monsters[i].životy << ")\n";
             }
         }
-    
 
         int výběr;
         cin >> výběr;
@@ -240,7 +263,7 @@ void multifight(player &hrac, vector<monster> &monsters)
         monsters.erase(remove_if(monsters.begin(), monsters.end(), [](monster &m) { return !m.IsAlive(); }), monsters.end());
     }
     
-    if (hrac.IsAlive())
+    if (hrac.IsAlive() && !monsters.empty())
     {
         cout << "Všechny monstra byly poraženy! Vyhrál jsi!\n";
     }
@@ -263,7 +286,7 @@ int main()
     warrior.maxenergie = 50;
     warrior.gold = 5;
     warrior.damage = 10;
-    warrior.className = "warrior";
+    warrior.className = "Warrior";
 
     player mage;
     mage.name = "Ranni Shadowcaster";
@@ -273,7 +296,7 @@ int main()
     mage.maxenergie = 25;
     mage.gold = 5;
     mage.damage = 30;
-    mage.className = "mage";
+    mage.className = "Mage";
 
     player rogue;
     rogue.name = "Ezio Silentblade";
@@ -283,8 +306,8 @@ int main()
     rogue.maxenergie = 30;
     rogue.gold = 5;
     rogue.damage = 30;
-    rogue.className = "rogue";
-    
+    rogue.className = "Rogue";
+
     player hráč;
 
     cout << "Zdravím poutníku vyber si svou postavu:\n";
@@ -325,6 +348,5 @@ int main()
         }
 
     } while (!potvrdit);
-
-    
+   
 }
