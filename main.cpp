@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 
+class player;
 using namespace std;
 
 void vymazat()
@@ -48,6 +49,11 @@ public:
     }
 };
 
+class miniboss : public monster {
+public:
+    miniboss(string name, int dmg, int hp, int xp, int gold) : monster(name, dmg, hp, xp, gold) {}
+};
+
 class player
 {
 public:
@@ -60,6 +66,7 @@ public:
     int zkušenosti{};
     int damage{};
     int gold{};
+    int healAmount{};
     string className;
 
     void StatyPlayer() const
@@ -133,6 +140,7 @@ private:
             maxenergie += 5;
             energie = maxenergie;
             damage += 5;
+            healAmount += 3;
             cout << "Gratulujeme! Postoupil jsi na úroveň " << level << "!\n";
             cout << "Tvé statistiky byly vylepšeny.\n";
             vymazat();
@@ -153,7 +161,6 @@ private:
     void heal() {
         if (energie >= 10) {
             energie -= 10;
-            int healAmount = 20;
             hp += healAmount;
             if (hp > maxhp) hp = maxhp;
             cout << "Používáš Heal a obnovuješ " << healAmount << " HP!\n";
@@ -369,9 +376,67 @@ void multifight(player &hráč, vector<monster> &monsters)
 
 }
 
-void miniBossFight()
+void fightMiniboss(player &hrac, miniboss &boss)
 {
+    if (boss.IsAlive()) {
+        boss.attack();
+        hrac.hp -= boss.damage;
+        if (hrac.hp < 0) hrac.hp = 0;
+        cout << "Zbývající životy hráče: " << hrac.hp << "\n";
+        if (!hrac.IsAlive()) {
+            cout << hrac.name << " byl poražen minibossem! Konec hry.\n";
+            exit(0); // Terminate the program
+        }
+    }
 
+    while (hrac.IsAlive() && boss.IsAlive())
+    {
+        cout << "Stav minibosse:\n";
+        cout << "Miniboss: " << boss.jméno << " - Životy: " << boss.životy << "\n";
+
+        cout << "\nTvůj tah, vyber si akci:\n1. Útok\n2. Použít schopnost\n";
+        int akce;
+        cin >> akce;
+
+        switch (akce) {
+            case 1:
+                cout << "Útočíš na minibosse " << boss.jméno << " a způsobuješ " << hrac.damage << " poškození.\n";
+                boss.takeDamage(hrac.damage);
+                if (!boss.IsAlive()) {
+                    cout << boss.jméno << " byl poražen!\n";
+                    hrac.gainExperience(boss.xpReward);
+                    hrac.gainGold(boss.goldReward);
+                }
+                break;
+            case 2: {
+                int abilityIndex;
+                cout << "Vyber si schopnost \n1 - útočná schopnost\n2 - vyléčení\n";
+                cin >> abilityIndex;
+                if (abilityIndex == 1 || abilityIndex == 2) {
+                    hrac.useAbility(abilityIndex, boss);
+                    if (!boss.IsAlive()) {
+                        cout << boss.jméno << " byl poražen!\n";
+                        hrac.gainExperience(boss.xpReward);
+                        hrac.gainGold(boss.goldReward);
+                    }
+                } else {
+                    cout << "Neplatná volba schopnosti.\n";
+                }
+                break;
+            }
+            default:
+                cout << "Neplatná akce.\n";
+                break;
+        }
+
+        if (boss.IsAlive()) {
+            boss.attack();
+            if (!hrac.IsAlive()) {
+                cout << hrac.name << " byl poražen minibossem! Konec hry.\n";
+                exit(0);
+            }
+        }
+    }
 }
 
 int main()
@@ -392,6 +457,7 @@ int main()
     warrior.damage = 100;
     warrior.level = 1;
     warrior.zkušenosti = 0;
+    warrior.healAmount = 10;
     warrior.className = "Warrior";
 
     player mage;
@@ -404,6 +470,7 @@ int main()
     mage.damage = 30;
     mage.level = 1;
     mage.zkušenosti = 0;
+    mage.healAmount = 15;
     mage.className = "Mage";
 
     player rogue;
@@ -416,19 +483,10 @@ int main()
     rogue.damage = 30;
     rogue.level = 1;
     rogue.zkušenosti = 0;
+    rogue.healAmount = 20;
     rogue.className = "Rogue";
 
     player hráč;
-    hráč.name = "";
-    hráč.hp = 0;
-    hráč.maxhp = 0;
-    hráč.energie = 0;
-    hráč.maxenergie = 0;
-    hráč.gold = 0;
-    hráč.damage = 0;
-    hráč.level = 1;
-    hráč.zkušenosti = 0;
-    hráč.className = "";
 
     cout << "Zdravím poutníku! ";
 
