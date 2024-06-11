@@ -1,10 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include <windows.h>
 #include <cstdlib>
 #include <algorithm>
 
-class player;
 using namespace std;
 
 void vymazat()
@@ -24,7 +24,7 @@ public:
 
     monster(string name, int dmg, int hp, int xp, int gold) : jméno(name), damage(dmg), životy(hp), xpReward(xp), goldReward(gold) {}
 
-    void StatyMonster() const
+    void staty() const
     {
         cout << "\nJméno: " << jméno << "\n";
         cout << "Životy: " << životy << "\n";
@@ -53,6 +53,49 @@ class miniboss : public monster {
 public:
     miniboss(string name, int dmg, int hp, int xp, int gold) : monster(name, dmg, hp, xp, gold) {}
 };
+
+class cutalot : public monster {
+public:
+    int turnCount;
+    int leftHandDamage;
+    int rightHandDamage;
+
+    cutalot(string name, int hp, int xp, int gold) : monster(name, 0, hp, xp, gold), turnCount(0), leftHandDamage(1), rightHandDamage(2) {}
+
+    void attack(auto &p)
+    {
+        if (turnCount % 10 == 0)
+        {
+            cout << jméno << " útočí oběma rukama naráz" << endl;
+            p.hp -= p.hp / 2;
+        }else if (turnCount % 2 == 1)
+        {
+            cout << jméno << " útočí levou rukou" << endl;
+            p.hp -= leftHandDamage;
+            životy += leftHandDamage / 6;
+            leftHandDamage += 2;
+        } else {
+            cout << jméno << " útočí pravou rukou" << endl;
+            p.hp -= rightHandDamage;
+            životy += rightHandDamage / 4;
+            rightHandDamage += 2;
+        }
+
+        turnCount++;
+
+        cout << "Cutalot způsobuje " << damage << " poškození.\n";
+        p.hp -= damage;
+
+        if (turnCount % 2 == 1)
+        {
+            životy += round(damage / 6);
+        } else {
+            životy += round(damage / 4);
+        }
+        if (životy > 400) životy = 400;
+    }
+};
+
 
 class player
 {
@@ -150,7 +193,7 @@ private:
      void bash(monster &target) {
         if (energie >= 10) {
             energie -= 10;
-            int abilityDamage = damage + 5;
+            int abilityDamage = round(damage * 1.5);
             cout << "Používáš Bash na " << target.jméno << " a způsobuješ " << abilityDamage << " poškození!\n";
             target.takeDamage(abilityDamage);
         } else {
@@ -172,7 +215,7 @@ private:
     void fireball(monster &target) {
         if (energie >= 20) {
             energie -= 20;
-            int abilityDamage = damage + 15;
+            int abilityDamage = round(damage * 1.8);
             cout << "Používáš Fireball na " << target.jméno << " a způsobuješ " << abilityDamage << " poškození!\n";
             target.takeDamage(abilityDamage);
         } else {
@@ -183,7 +226,7 @@ private:
     void backstab(monster &target) {
         if (energie >= 15) {
             energie -= 15;
-            int abilityDamage = damage + 20;
+            int abilityDamage = round(damage * 2.1);
             cout << "Používáš Backstab na " << target.jméno << "a způsobuješ " << abilityDamage << " poškození!\n";
             target.takeDamage(abilityDamage);
         } else {
@@ -192,79 +235,131 @@ private:
     }
 };
 
-void vesnice(int &gold, int &životy, int &maxživoty, int &energie, int &maxenergie)
-{
+void vesnice(player &hráč) {
     int volba;
     bool opakovat = true;
+    srand(time(nullptr));
 
-    do
-    {
+    do {
+        cout << "--------------------------------------\n";
         cout << "Vítej ve vesnici!\n";
         cout << "Co si přeješ udělat?\n";
-        cout << "1. Koupit zvýšení životů (+10 HP)\n";
-        cout << "2. Koupit zvýšení many (+10 MP)\n";
-        cout << "3. Vyléčit se na maximum\n";
-        cout << "4. Doplnit manu na maximum\n";
-        cout << "5. Nic, odejít z vesnice\n";
+        cout << "1. Mluvit s obchodníkem\n";
+        cout << "2. Prozkoumat vesnici\n";
+        cout << "3. Odejd z vesnice\n";
+        cout << "--------------------------------------\n";
 
         cin >> volba;
+        vymazat();
 
-        switch (volba)
-        {
-        case 1:
-            if (gold >= 10)
-            {
-                gold -= 10;
-                maxživoty += 10;
-                cout << "Koupil jsi zvýšení životů (+10 HP).\n";
-            } else
-            {
-                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
-            }
-            break;
+        switch (volba) {
+            case 1:
+                cout << "Vaše staty:\n";
+                hráč.StatyPlayer();
+                cout << "Obchodník: \"Zdravím tě, dobrodruhu! Co ti mohu nabídnout?\"\n";
+                cout << "1. Zvýšení životů (+10 HP) - 10 zlaťáků\n";
+                cout << "2. Zvýšení many (+10 MP) - 10 zlaťáků\n";
+                cout << "3. Vyléčení na maximum - 10 zlaťáků\n";
+                cout << "4. Doplnění many na maximum - 10 zlaťáků\n";
+                cout << "5. Koupit zbraň (+5 damage) - 30 zlaťáků\n";
+                cout << "6. Zpět\n";
+                int obchodnikVolba;
+                cin >> obchodnikVolba;
+                vymazat();
 
-        case 2:
-            if (gold >= 10)
-            {
-                gold -= 10;
-                maxenergie += 10;
-                cout << "Koupil jsi zvýšení many (+10 MP).\n";
-            } else
-            {
-                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
-            }
-            break;
+                switch (obchodnikVolba) {
+                    case 1:
+                        if (hráč.gold >= 10) {
+                            hráč.gold -= 10;
+                            hráč.maxhp += 10;
+                            cout << "Koupil jsi zvýšení životů (+10 HP).\n";
+                        } else {
+                            cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+                        }
+                        break;
+                    case 2:
+                        if (hráč.gold >= 10) {
+                            hráč.gold -= 10;
+                            hráč.maxenergie += 10;
+                            cout << "Koupil jsi zvýšení many (+10 MP).\n";
+                        } else {
+                            cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+                        }
+                        break;
+                    case 3:
+                        if (hráč.gold >= 10) {
+                            hráč.gold -= 10;
+                            hráč.hp = hráč.maxhp;
+                            cout << "Byl jsi vyléčen na maximum.\n";
+                        } else {
+                            cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+                        }
+                        break;
+                    case 4:
+                        if (hráč.gold >= 10) {
+                            hráč.gold -= 10;
+                            hráč.energie = hráč.maxenergie;
+                            cout << "Tvá mana byla doplněna na maximum.\n";
+                        } else {
+                            cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+                        }
+                        break;
+                    case 5:
+                        if (hráč.gold >= 30) {
+                            hráč.gold -= 30;
+                            hráč.damage += 5;
+                            cout << "Koupil jsi novou zbraň (+5 damage).\n";
+                        } else {
+                            cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
+                        }
+                        break;
+                    case 6:
+                        cout << "Obchodník: \"Nashledanou, dobrodruhu!\"\n";
+                        break;
+                    default:
+                        cout << "Neplatná volba.\n";
+                        break;
+                }
+                vymazat();
+                break;
 
-        case 3:
-            if (gold >= 10)
-            {
-                životy = maxživoty;
-                cout << "Byl jsi vyléčen na maximum.\n";
-            } else
-            {
-                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
-            }
-            break;
+            case 2:
+                int nahodnaUdalost;
+                nahodnaUdalost = rand() % 4;
+                if (nahodnaUdalost == 0) {
+                    cout << "Našel jsi zlaťák na zemi! (+5 zlaťáků)\n";
+                    hráč.gold += 5;
+                } else if (nahodnaUdalost == 1) {
+                    cout << "Potkal jsi starého známého, který ti dal lektvar zdraví (+10 HP).\n";
+                    hráč.maxhp += 10;
+                } else if (nahodnaUdalost == 2) {
+                    cout << "Byl jsi napaden bandity! Utekl jsi, ale ztratil jsi 5 zlaťáků.\n";
+                    if (hráč.gold >= 5) hráč.gold -= 5;
+                } else {
+                    cout << "Naletěl jsi na past a ztratil jsi 5 HP!\n";
+                    hráč.hp -= 5;
+                    if (hráč.hp < 0) hráč.hp = 0;
+                    cout << "Zbývající životy hráče: " << hráč.hp << "\n";
+                    if (!hráč.IsAlive())
+                    {
+                        cout << "Byl jsi poražen...\n";
+                        Sleep(2000);
+                        exit(0);
+                    }
+                }
+                vymazat();
+                break;
 
-        case 4:
-           if (gold >= 10)
-            {
-            energie = maxenergie;
-            cout << "Tvá mana byla doplněna na maximum.\n";
-            } else
-            {
-                cout << "Nemáš dostatek zlaťáků na tento nákup.\n";
-            }
-            break;
+            case 3:
+                cout << "Opouštíš vesnici.\n";
+                opakovat = false;
+                vymazat();
+                break;
 
-        case 5:
-            cout << "Opouštíš vesnici.\n";
-            opakovat = false;
-            break;
-
-        default:
-            cout << "Neplatná volba, zkus to znovu.\n";
-            break;
+            default:
+                cout << "Neplatná volba, zkus to znovu.\n";
+                vymazat();
+                break;
         }
 
     } while (opakovat);
@@ -275,12 +370,15 @@ void multifight(player &hráč, vector<monster> &monsters)
     while (hráč.IsAlive() && !monsters.empty())
     {
         cout << "\nKolo začíná!\n";
+        cout << "Stav hráče:\n";
+        hráč.StatyPlayer();
+
         cout << "Stav monster:\n";
 
         for (int i = 0; i < monsters.size(); i++)
         {
             cout << 1 + i << ": ";
-            monsters[i].StatyMonster();
+            monsters[i].staty();
         }
 
         cout << "\nVyber si akci:\n1. Útok\n2. Použití schopnosti\n";
@@ -378,6 +476,7 @@ void multifight(player &hráč, vector<monster> &monsters)
 
 void fightMiniboss(player &hrac, miniboss &boss)
 {
+    cout << "Zaútočil na tebe " << boss.jméno << "!\n";
     if (boss.IsAlive()) {
         boss.attack();
         hrac.hp -= boss.damage;
@@ -385,12 +484,17 @@ void fightMiniboss(player &hrac, miniboss &boss)
         cout << "Zbývající životy hráče: " << hrac.hp << "\n";
         if (!hrac.IsAlive()) {
             cout << hrac.name << " byl poražen minibossem! Konec hry.\n";
-            exit(0); // Terminate the program
+            exit(0);
         }
     }
 
+    vymazat();
+
     while (hrac.IsAlive() && boss.IsAlive())
     {
+        cout << "\nStav hráče:\n";
+        hrac.StatyPlayer();
+
         cout << "Stav minibosse:\n";
         cout << "Miniboss: " << boss.jméno << " - Životy: " << boss.životy << "\n";
 
@@ -431,10 +535,67 @@ void fightMiniboss(player &hrac, miniboss &boss)
 
         if (boss.IsAlive()) {
             boss.attack();
+            hrac.hp -= boss.damage;
+            if (hrac.hp < 0) {hrac.hp = 0;}
+            cout << "Zbývající životy hráče: " << hrac.hp << "\n";
             if (!hrac.IsAlive()) {
                 cout << hrac.name << " byl poražen minibossem! Konec hry.\n";
                 exit(0);
             }
+        }
+    }
+}
+
+void fightCutalot(player &hrac, cutalot &boss) {
+    while (hrac.IsAlive() && boss.IsAlive()) {
+
+        boss.attack(hrac);
+
+        if (!hrac.IsAlive()) {
+            cout << hrac.name << " byl poražen Cutalotem! Konec hry.\n";
+            exit(0);
+        }
+
+
+        cout << "Stav Cutalota:\n";
+        cout << "Cutalot: " << boss.jméno << " - Životy: " << boss.životy << "/" << "400" << "\n";
+
+
+        cout << "\nTvoje tah, vyber si akci:\n1. Útok\n2. Použít schopnost\n";
+        int akce;
+        cin >> akce;
+
+        switch (akce) {
+            case 1:
+                cout << "Útočíš na Cutalota " << boss.jméno << " a způsobuješ " << hrac.damage << " poškození.\n";
+                boss.takeDamage(hrac.damage);
+                break;
+            case 2: {
+                int abilityIndex;
+                cout << "Vyber si schopnost (1-2): ";
+                cin >> abilityIndex;
+                if (abilityIndex == 1 || abilityIndex == 2) {
+                    hrac.useAbility(abilityIndex, boss);
+                    if (!boss.IsAlive()) {
+                        cout << boss.jméno << " byl poražen!\n";
+                        hrac.gainExperience(boss.xpReward);
+                        hrac.gainGold(boss.goldReward);
+                        break;
+                    }
+                } else {
+                    cout << "Neplatná volba schopnosti.\n";
+                }
+                break;
+            }
+            default:
+                cout << "Neplatná akce.\n";
+                break;
+        }
+
+        if (!boss.IsAlive()) {
+            cout << boss.jméno << " byl poražen!\n";
+            cout << "VYHRÁL JSI HRU!\n";
+            break;
         }
     }
 }
@@ -501,7 +662,7 @@ int main()
         case 1:
             hráč = warrior;
             hráč.StatyPlayer();
-            cout << "ability: \n- 1.Shield Bash\n- 2. Heal\n\n";
+            cout << "ability: \n- 1. Shield Bash\n- 2. Heal\n\n";
             break;
 
         case 2:
@@ -516,9 +677,9 @@ int main()
             cout << "ability: \n- 1. Backstab\n- 2. Heal\n\n";
             break;
 
-            default:
-                cout << "Špatná volba. Musíte 1-3.";
-                break;
+        default:
+            cout << "Špatná volba. Musíte 1-3.";
+            break;
         }
 
         cout << "Potvrďte výběr postavy stiskem 'y', odmítněte klávesou 'n':\n";
