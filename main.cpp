@@ -9,7 +9,7 @@ using namespace std;
 
 void vymazat()
 {
-    Sleep(2000);
+    Sleep(3000);
     system("CLS");
 }
 
@@ -62,21 +62,21 @@ public:
 
     cutalot(string name, int hp, int xp, int gold) : monster(name, 0, hp, xp, gold), turnCount(0), leftHandDamage(1), rightHandDamage(2) {}
 
-    void attack(auto &p)
+    void attack(auto &player)
     {
         if (turnCount % 10 == 0)
         {
             cout << jméno << " útočí oběma rukama naráz" << endl;
-            p.hp -= p.hp / 2;
+            player.hp -= player.hp / 2;
         }else if (turnCount % 2 == 1)
         {
             cout << jméno << " útočí levou rukou" << endl;
-            p.hp -= leftHandDamage;
+            player.hp -= leftHandDamage;
             životy += leftHandDamage / 6;
             leftHandDamage += 2;
         } else {
             cout << jméno << " útočí pravou rukou" << endl;
-            p.hp -= rightHandDamage;
+            player.hp -= rightHandDamage;
             životy += rightHandDamage / 4;
             rightHandDamage += 2;
         }
@@ -84,7 +84,7 @@ public:
         turnCount++;
 
         cout << "Cutalot způsobuje " << damage << " poškození.\n";
-        p.hp -= damage;
+        player.hp -= damage;
 
         if (turnCount % 2 == 1)
         {
@@ -92,7 +92,7 @@ public:
         } else {
             životy += round(damage / 4);
         }
-        if (životy > 400) životy = 400;
+        if (životy > 600) životy = 600;
     }
 };
 
@@ -330,7 +330,7 @@ void vesnice(player &hráč) {
                     cout << "Našel jsi zlaťák na zemi! (+5 zlaťáků)\n";
                     hráč.gold += 5;
                 } else if (nahodnaUdalost == 1) {
-                    cout << "Potkal jsi starého známého, který ti dal lektvar zdraví (+10 HP).\n";
+                    cout << "Potkal jsi starého známého, který ti dal lektvar zdraví (+10 MAX HP).\n";
                     hráč.maxhp += 10;
                 } else if (nahodnaUdalost == 2) {
                     cout << "Byl jsi napaden bandity! Utekl jsi, ale ztratil jsi 5 zlaťáků.\n";
@@ -556,10 +556,8 @@ void fightCutalot(player &hrac, cutalot &boss) {
             exit(0);
         }
 
-
         cout << "Stav Cutalota:\n";
         cout << "Cutalot: " << boss.jméno << " - Životy: " << boss.životy << "/" << "400" << "\n";
-
 
         cout << "\nTvoje tah, vyber si akci:\n1. Útok\n2. Použít schopnost\n";
         int akce;
@@ -594,7 +592,8 @@ void fightCutalot(player &hrac, cutalot &boss) {
 
         if (!boss.IsAlive()) {
             cout << boss.jméno << " byl poražen!\n";
-            cout << "VYHRÁL JSI HRU!\n";
+            cout << "VYHRÁL JSI HRU A ZLO BYLO ZAHNÁNO!\n";
+            vymazat();
             break;
         }
     }
@@ -608,14 +607,66 @@ int main()
     char potvrzení;
     bool potvrdit;
 
+    vector<monster> monsters1 =
+    {
+        monster("Bludička", 5, 40, 15, 10)
+    };
+
+    vector<monster> monsters2 =
+    {
+        monster("Vlk", 10, 60, 20, 15)
+    };
+
+    vector<monster> monsters3 =
+    {
+        monster("Kamený golem", 15, 120, 30, 10),
+        monster("Dřevěný golem", 12, 100, 25, 12)
+    };
+
+    vector<monster> monsters4 =
+    {
+        monster("Banshee", 12, 50, 35, 15)
+    };
+
+    vector<monster> monsters5 =
+    {
+        monster("Rudý pavouk", 8, 35, 18, 10),
+        monster("Zelený pavouk", 6, 30, 15, 8)
+    };
+
+    vector<monster> monsters6 =
+    {
+        monster("Ent", 14, 110, 28, 12),
+        monster("Živý keř", 9, 50, 20, 10)
+    };
+
+    vector<monster> monsters7 =
+    {
+        monster("Ohnivý Elementál", 18, 80, 35, 15),
+        monster("Vodní Elementál", 18, 80, 35, 15)
+    };
+
+    vector<monster> monsters8 =
+    {
+        monster("Vlkodlak", 20, 90, 28, 20),
+        monster("Krysí mutant", 12, 55, 22, 15)
+    };
+
+    vector<monster> monsters9 =
+    {
+        monster("Obr", 30, 200, 50, 20),
+        monster("Ork", 20, 100, 35, 15),
+        monster("Goblin", 12, 60, 25, 10)
+    };
+
     player warrior;
     warrior.name = "Darius Ironfist";
-    warrior.hp = 20;
-    warrior.maxhp = 20;
+    warrior.hp = 50;
+    warrior.maxhp = 50;
     warrior.energie = 50;
     warrior.maxenergie = 50;
     warrior.gold = 5;
-    warrior.damage = 100;
+    warrior.damage = 15;
     warrior.level = 1;
     warrior.zkušenosti = 0;
     warrior.healAmount = 10;
@@ -623,12 +674,12 @@ int main()
 
     player mage;
     mage.name = "Ranni Shadowcaster";
-    mage.hp = 15;
-    mage.maxhp = 15;
+    mage.hp = 40;
+    mage.maxhp = 40;
     mage.energie = 25;
     mage.maxenergie = 25;
     mage.gold = 5;
-    mage.damage = 30;
+    mage.damage = 20;
     mage.level = 1;
     mage.zkušenosti = 0;
     mage.healAmount = 15;
@@ -636,12 +687,12 @@ int main()
 
     player rogue;
     rogue.name = "Ezio Silentblade";
-    rogue.hp = 10;
-    rogue.maxhp = 10;
+    rogue.hp = 30;
+    rogue.maxhp = 30;
     rogue.energie = 30;
     rogue.maxenergie = 30;
     rogue.gold = 5;
-    rogue.damage = 30;
+    rogue.damage = 25;
     rogue.level = 1;
     rogue.zkušenosti = 0;
     rogue.healAmount = 20;
@@ -682,7 +733,7 @@ int main()
             break;
         }
 
-        cout << "Potvrďte výběr postavy stiskem 'y', odmítněte klávesou 'n':\n";
+        cout << "Potvrďte výběr postavy stiskem 'y', odmítněte klávesou 'n': ";
         cin >> potvrzení;
 
         if (potvrzení == 'y' || potvrzení == 'Y')
@@ -699,11 +750,80 @@ int main()
 
     vymazat();
 
-    vector<monster> monsters = {
-        monster("Goblin", 1, 30, 50, 10),
-        monster("Orc", 1, 40, 70, 15),
-        monster("Dragon", 1, 50, 100, 50)
-    };
+    cout << "Nacházíš se v malé vesnici obklopené hustým temným lesem. \nVesnice, která se jmenuje Zelený Háj, žije v míru a klidu díky ochraně kouzelného artefaktu ukrytého v místním chrámu.\nTento artefakt má moc udržovat zlo a temnotu na pokraji lesa.";
+    Sleep(15000);
+    system("CLS");
+    cout << "Jednoho dne se však začnou dít neobvyklé věci.\n Monstra začnou útočit na vesnici z okolního lesa, což přivádí obyvatele do obav.\nTy jsi zde od toho aby si příčinu těchto útoků";
+    Sleep(8000);
+    system("CLS");
+    vesnice(hráč);
 
-    multifight(hráč, monsters);
+    cout << "Vydáváš se do temného lesa a potkáváš bludičku!";
+    Sleep(3000);
+    system("CLS");
+    multifight(hráč, monsters1);
+
+    cout << "Po poražení bludičky na tebe vyskočí vlk. POZOR!";
+    multifight(hráč, monsters2);
+
+    cout << "Jdeš dále temným lesem...";
+    Sleep(3000);
+    system("CLS");
+    cout << "Potkáš temného druida, který na tebe vyvolá 2 golemy!";
+    multifight(hráč, monsters3);
+
+    cout << "Teď je čas na Druida.";
+    Sleep(3000);
+    system("CLS");
+    miniboss druid("Druid", 20, 150, 50, 30);
+    fightMiniboss(hráč, druid);
+
+    cout << "Zjevuje se ti stinná postava která povídá,\nže za útoky stojí stinná bytost, která chce získat kouzelný artefakt.\nTuto zprávu poté sděluješ ve vesnici.";
+    Sleep(8000);
+    system("CLS");
+    vesnice(hráč);
+
+    cout << "Jdeš na další zase prozkoumat les a najít další vodítka.\n";
+    cout << "Potkáváš banshee a útočí na tebe\n";
+    Sleep(8000);
+    system("CLS");
+    multifight(hráč, monsters4);
+
+    cout << "Při prozkoumávání temného údolí narazí na dva Obří pavouky!";
+    Sleep(3000);
+    system("CLS");
+    multifight(hráč, monsters5);
+
+    cout << "Pokračuješ v cestě a narazíš na enta a živý keř.";
+    Sleep(3000);
+    system("CLS");
+    multifight(hráč, monsters6);
+
+    cout << "Nyní musíš čelit obří harpyji která se snesla z nebe!";
+    Sleep(3500);
+    system("CLS");
+    miniboss harpije("Harpyje", 25, 180, 60, 35);
+
+    cout << "Po poražení harpije si všimneš svitku s runami a mapou na její hrudi.\nVezmeš si ho a ukážeš stařešinovi, který rozpoznává symbol na mapě jako ztracený chrám v srdci lesa.\nStařešina vysvětluje, že tento chrám byl kdysi sídlem mocného Cutalota, démona z dávných dob.\n";
+    Sleep(15000);
+    system("CLS");
+    vesnice(hráč);
+
+    cout << "Předtím než se chceš vidat do Cutalotova chrámu, tak začnou utočit monstra na vesnici.\n";
+    Sleep(4000);
+    system("CLS");
+    multifight(hráč, monsters7);
+    multifight(hráč, monsters8);
+    multifight(hráč, monsters9);
+    cout << "Úspěšně si ochránil vesnici!\n";
+    Sleep(3000);
+    system("CLS");
+    vesnice(hráč);
+
+    cout << "Vydáváš se do Cutalotova chrámu...\n";
+    Sleep(3000);
+    system("CLS");
+
+    cutalot Cutalot("Cutalot", 600, 0, 0);
+    fightCutalot(hráč, Cutalot);
 }
